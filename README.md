@@ -7,9 +7,17 @@ Create a network
 
 `docker network create testnet`
 
+Build Server
+
+`docker build -t my-server-app .`
+
 Start Server
 
 `docker run -p 54000:54000 --network testnet my-server-app`
+
+Build Client
+
+`docker build -t my-client-app .`
 
 Start Client
 
@@ -20,7 +28,7 @@ Connect to Client
 ```bash
 docker exec -it <container name>
 # ex
-docker exec -it angry_kalam /bin/sh
+docker exec -it naughty_proskuriakova /bin/sh
 ```
 
 Run Client

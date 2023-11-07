@@ -19,18 +19,13 @@ int main() {
     }
 
     // Bind socket to any available IP Address + Port
-    // sockaddr_in hint;
-    // hint.sin_family = AF_INET;
-    // hint.sin_port = htons(54000);
-    // inet_pton(AF_INET, "0.0.0.0", &hint.sin_addr);
-
-    struct sockaddr_in address;
-    address.sin_family = AF_INET;
-    address.sin_addr.s_addr = INADDR_ANY;
-    address.sin_port = htons(54000);
+    struct sockaddr_in hint;
+    hint.sin_family = AF_INET;
+    hint.sin_port = htons(54000);
+    inet_pton(AF_INET, "0.0.0.0", &hint.sin_addr);
 
     // Binding Information
-    if (-1 == bind(listening, (struct sockaddr *) &address, sizeof(address))) {
+    if (-1 == bind(listening, (struct sockaddr *) &hint, sizeof(hint))) {
         std::cerr << "Cannot bind to socket";
         return -2;
     }

@@ -20,8 +20,7 @@ int main() {
 
     // Create hint structure for the server we are connecting with
     int port = 54000;
-    // std::string ipAddress = "0.0.0.0";
-    std::string ipAddress = "172.28.0.2";
+    std::string ipAddress = "0.0.0.0";
 
     sockaddr_in hint;
     hint.sin_family = AF_INET;
