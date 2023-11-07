@@ -1,0 +1,3 @@
+/Users/jackdisalvatore/CppCode/demoapp/server/build/CMakeFiles/MyServerProgram.dir
+/Users/jackdisalvatore/CppCode/demoapp/server/build/CMakeFiles/edit_cache.dir
+/Users/jackdisalvatore/CppCode/demoapp/server/build/CMakeFiles/rebuild_cache.dir

@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+  myserver:
+    build:
+      context: ./server  # Build context directory containing Dockerfile
+    container_name: myserver_container
+    command: ["./build/MyServerProgram"]
+    working_dir: /app
+    environment:
+      - MY_ENV_VAR=some_value  # Set environment variables if needed
+    ports:
+      - 54000:54000  # Map container's port to the host
+    healthcheck:
+      # test: ["CMD-SHELL", "nc -z localhost 54000 || exit 1"]
+      test: ["CMD-SHELL", "sleep 3 || exit 1"]
+      interval: 5s
+      timeout: 10s
+      retries: 3
+    networks:
+      - mynetwork
+
+  myclient:
+    build:
+      context: ./client  # Build context directory containing Dockerfile
+    container_name: myclient_container
+    command: ["./build/MyClientProgram"]
+    working_dir: /app
+    environment:
+      - MY_ENV_VAR=some_value  # Set environment variables if needed
+    depends_on:
+      myserver:  # Ensure the server is started before the client
+        condition: service_healthy  # Wait for the 'tcp-server' service to be healthy
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
