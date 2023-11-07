@@ -11,5 +11,7 @@ Run
 Connect
 
 ```bash
-
+docker exec -it <container name>
+# ex
+docker exec -it angry_kalam /bin/sh
 ```
