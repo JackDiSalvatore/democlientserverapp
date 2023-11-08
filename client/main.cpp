@@ -7,63 +7,78 @@
 #include <string.h>
 #include <string>
 
-int main() {
-    std::cout << "Start!" << std::endl;
+class TCPClient {
+public:
+    TCPClient() : sock(-1) {}
 
-    // Create a socket
-    int sock = socket(AF_INET, SOCK_STREAM, 0);
-
-    if (-1 == sock) {
-        std::cerr << "Error creating socket" << std::endl;
-        return -1;
+    ~TCPClient() {
+        if (sock != -1) {
+            close(sock);
+        }
     }
 
-    // Create hint structure for the server we are connecting with
-    int port = 54000;
-    std::string ipAddress = "0.0.0.0";
+    int connectServer(const std::string& ipAddress, int port) {
+        std::cout << "Start!" << std::endl;
 
-    sockaddr_in hint;
-    hint.sin_family = AF_INET;
-    hint.sin_port = htons(port);
-    inet_pton(AF_INET, ipAddress.c_str(), &hint.sin_addr);
+        // Create a socket
+        sock = socket(AF_INET, SOCK_STREAM, 0);
 
-    // Connect to the server on the socket
-    int connectRes = connect(sock, (sockaddr *) &hint, sizeof(hint));
-
-    if (-1 == connectRes) {
-        std::cerr << "Connection to server failed" << std::endl;
-        return -2;
-    }
-
-    // While loop
-    char buf[4096];
-    std::string userInput;
-
-    do {
-        std::cout << "> ";
-        std::getline(std::cin, userInput);
-
-        // Send to server
-        int sendRes = send(sock, userInput.c_str(), userInput.size() + 1, 0);
-
-        if (-1 == sendRes) {
-            std::cout << "Sending failed..." << std::endl;
-            continue;
+        if (-1 == sock) {
+            std::cerr << "Error creating socket" << std::endl;
+            return -1;
         }
 
-        // Wait for response
-        memset(buf, 0, 4096);
-        int bytesReceived = recv(sock, buf, 4096, 0);
+        // Create hint structure for the server we are connecting with
+        sockaddr_in hint;
+        hint.sin_family = AF_INET;
+        hint.sin_port = htons(port);
+        inet_pton(AF_INET, ipAddress.c_str(), &hint.sin_addr);
 
-        // Display response
-        std::cout << bytesReceived << std::endl;
-        std::cout << "SERVER: " << std::string(buf, bytesReceived) << std::endl;
-    } while (true);
+        // Connect to the server on the socket
+        int connectRes = connect(sock, (sockaddr*)&hint, sizeof(hint));
 
-    // Close the socket
-    close(sock);
+        if (-1 == connectRes) {
+            std::cerr << "Connection to server failed" << std::endl;
+            return -2;
+        }
 
-    // Done
-    std::cout << "Done!" << std::endl;
+        return 0;
+    }
+
+    void runClient() {
+        // While loop
+        char buf[4096];
+        std::string userInput;
+
+        do {
+            std::cout << "> ";
+            std::getline(std::cin, userInput);
+
+            // Send to server
+            int sendRes = send(sock, userInput.c_str(), userInput.size() + 1, 0);
+
+            if (-1 == sendRes) {
+                std::cout << "Sending failed..." << std::endl;
+                continue;
+            }
+
+            // Wait for response
+            memset(buf, 0, 4096);
+            int bytesReceived = recv(sock, buf, 4096, 0);
+
+            // Display response
+            std::cout << "SERVER: " << std::string(buf, bytesReceived) << std::endl;
+        } while (true);
+    }
+
+private:
+    int sock;
+};
+
+int main() {
+    TCPClient client;
+    if (client.connectServer("172.28.0.2", 54000) == 0) {
+        client.runClient();
+    }
     return 0;
 }
